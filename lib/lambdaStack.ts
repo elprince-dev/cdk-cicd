@@ -1,15 +1,24 @@
 import { Stack, StackProps } from "aws-cdk-lib";
+import { Code, Runtime } from "aws-cdk-lib/aws-lambda";
+import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import { Construct } from "constructs";
 
 
 interface LambdaStackProps extends StackProps {
-  stageName?: string;
+    stageName?: string;
 }
 
 export class LambdaStack extends Stack {
     constructor(scope: Construct, id: string, props: LambdaStackProps) {
-    super(scope, id, props);
+        super(scope, id, props);
 
-    // Define your Lambda function and related resources here.
-  }
+        new NodejsFunction(this, 'hello-lambda', {
+            runtime: Runtime.NODEJS_22_X,
+            code: Code.fromAsset("lambda"),
+            handler: "hello.handler",
+            environment: {
+                STAGE: props.stageName!
+            }
+        })
+    }
 }
